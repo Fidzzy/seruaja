@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>060106-060126</title>
+    <style>
+        /* --- GAYA TAMPILAN (CSS) --- */
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0d1117; 
+            color: #e6edf3;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 0;
+        }
+
+        /* Jendela Terminal */
+        .terminal-window {
+            width: 90%;
+            max-width: 900px;
+            min-height: 80vh;
+            height: auto;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0; /* Tersembunyi di awal */
+            transition: opacity 1s ease-in;
+        }
+
+        .terminal-header {
+            background-color: #21262d;
+            padding: 12px 20px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .red { background-color: #ff5f56; }
+        .yellow { background-color: #ffbd2e; }
+        .green { background-color: #27c93f; }
+
+        .title {
+            margin-left: 15px;
+            font-size: 0.9rem;
+            color: #8b949e;
+            font-weight: bold;
+        }
+
+        .terminal-body {
+            padding: 25px;
+            flex-grow: 1;
+            overflow-y: visible;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .line {
+            margin-bottom: 8px;
+            white-space: pre-wrap;
+            display: block;
+        }
+
+        .keyword { color: #f765ff; }
+        .string { color: #a5d6ff; }
+        .success { color: #7ee787; }
+        
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2rem;
+            background-color: #58a6ff;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* --- Overlay Tombol Start (BARU) --- */
+        .start-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0d1117;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 0.5s;
+        }
+
+        .start-btn {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            box-shadow: 0 5px 15px rgba(35, 134, 54, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .start-btn:hover {
+            background-color: #2ea043;
+            transform: scale(1.05);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(35, 134, 54, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0); }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0d1117; }
+        ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <!-- Overlay Start Button -->
+    <div id="startOverlay" class="start-overlay">
+        <button class="start-btn" id="startBtn">📩 Buka Pesan</button>
+        <p style="margin-top: 15px; color: #8b949e; font-size: 0.9rem;">(Disarankan nyalakan volume suara)</p>
+    </div>
+
+    <!-- Audio Element -->
+    <!-- PERHATIAN: GANTI src DI BAWAH DENGAN FILE LAGUMU -->
+    <!-- Contoh: <source src="lagu-favorit-dia.mp3" type="audio/mpeg"> -->
+    <audio id="bgMusic" loop>
+        <source src="laguakhir.mp3" type="audio/mpeg">
+        Browser kamu tidak mendukung audio.
+    </audio>
+
+    <div class="terminal-window" id="terminalWindow">
+        <div class="terminal-header">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+            <span class="title">Merayakan Seperlima Abad Lahirnya Muti</span>
+        </div>
+        <div class="terminal-body" id="consoleOutput">
+            <span class="cursor"></span>
+        </div>
+    </div>
+
+    <script>
+        // Skenario Asli Kamu
+        const skenarioCoding = [
+            { text: "Haloooooo......", speed: 70, delayAfter: 2000 },
+            { text: "Met Ultah ke-20! Mutiiiiii 🎂", speed: 60, delayAfter: 1500, className: "keyword" },
+            { text: "WE WE WE", speed: 50, delayAfter: 1000 },
+            { text: "Dah 20 aja kau yaa, apalah aku masih 18", speed: 50, delayAfter: 1500 },
+            { text: "Jadiii.....", speed: 60, delayAfter: 4000 },
+            { text: "Ntah mau bilang apalagi da", speed: 60, delayAfter: 2000 },
+            { text: "Apa ya??", speed: 40, delayAfter: 4000 },
+            { text: "Semoga sehat selalu", speed: 60, delayAfter: 1000 },
+            { text: "Dilancarkan rezekinya", speed: 60, delayAfter: 1000 },
+            { text: "Dipermudah urusannya", speed: 60, delayAfter: 1000 },
+            { text: "Semua impianmu perlahan terwujud", speed: 60, delayAfter: 1200 },
+            { text: "Ish itu ajala yg slalu dibilang klo orang ultah", speed: 70, delayAfter: 500 },
+            { text: "Ana template da", speed: 40, delayAfter: 2000 },
+            { text: "Oiya", speed: 60, delayAfter: 1500 },
+            { text: "Semoga dilancarkan kuliahnya", speed: 60, delayAfter: 1000 },
+            { text: "Dapat IP bagusssss", speed: 60, delayAfter: 1000 },
+            { text: "Dapat penempatan bagus pas lulus (*aku juga)", speed: 60, delayAfter: 1000 },
+            { text: "Ato pindahla kau yok ke Sumut sini wkwkwk", speed: 60, delayAfter: 1000 },
+            { text: "Bisa tetap ketawa ketiwi biarpun nanti banyak tugas", speed: 50, delayAfter: 1000 },
+            { text: "Bisa tetap ceria walau capeknya yaaa gitulah", speed: 50, delayAfter: 1000 },
+            { text: "Klo kenapa2 ntah ada tugas ato apalah selain itu gausa segan chat anak2 pasid wkwkwk", speed: 60, delayAfter: 1000 },
+            { text: "Langsung sokab aja gapapa, mintol yg gangotak pun gas aja", speed: 60, delayAfter: 1000 },
+            { text: "Ah klo samaku gosah lgi kubilang ntah mau lgsg kau telp ato apa kek, feel free ajalah pokoknya", speed: 60, delayAfter: 1000, className:"success" },
+            { text: "Dapat kawan2 yang sefrekuensi dan selalu support", speed: 50, delayAfter: 1000 },
+            { text: "Nikmati 3 taunmu di Jakarta yg se grasak-grusuk ini", speed: 50, delayAfter: 1000 },
+            { text: "Banyak yg belum kau jelajahi disini (*sama sih kek aku T_T)", speed: 60, delayAfter: 1000 },
+            { text: "Klo nti kuajak pergi lagi mau ga ya??? hehe", speed: 60, delayAfter: 1000 },
+            { text: "Atau gantian kek kau yg ngajakin aku wkwkwk", speed: 60, delayAfter: 1000 },
+            { text: "Truss apalagi ya", speed: 50, delayAfter: 2500 },
+            { text: "Hee tau kau", speed: 60, delayAfter: 2000 },
+            { text: "Sebenarnya kan....", speed: 60, delayAfter: 3000 },
+            { text: "Mau ini aja kukirim, cuma kek ih mending ku edit juga yg taun lalu", speed: 60, delayAfter: 1000 },
+            { text: "Yaa biarpun cuma sekadar tulisan gini hehe", speed: 60, delayAfter: 1000 },
+            { text: "Dah lama sih ini kubuat, keknya pas Oktober", speed: 60, delayAfter: 1000 },
+            { text: "Ada pelatihan kan diajarin buat gini tpi gatau aku kek buat apaa gitu", speed: 60, delayAfter: 1000 },
+            { text: "Eh ternyata bisa juga dibuat gini", speed: 60, delayAfter: 1000 },
+            { text: "Kemarin kan ada kuminta vid kita ga kau kasih :)", speed: 60, delayAfter: 1000 },
+            { text: "Gari mau kumasukkannya editannya itu ke halaman sebelumnya", speed: 60, delayAfter: 1000 },
+            { text: "*Nyoba ngedit ala-ala sinematik gitu wkwk", speed: 60, delayAfter: 1000 },
+            { text: "Tapi gapapalah, mungkin terlalu gelap ya vidnya itu", speed: 60, delayAfter: 1000 },
+            { text: "Mungkin itu ajalah dlu", speed: 60, delayAfter: 1500 },
+            { text: "Tengs ya dah mau nyimak yappingan keren ini spe habis (*anjayyyy kek iya aja)", speed: 60, delayAfter: 1000 },
+            { text: "Tengs juga dh mau ngeladeni ntah apa aj yg kubilang", speed: 60, delayAfter: 1000 },
+            { text: "Dah capek kau pasti dengarnya :)", speed: 60, delayAfter: 1000 },
+            { text: "Sekali lagi, Happy Birthday yyyyyyyyy! ✨", speed: 50, delayAfter: 1000, className: "keyword" },
+            { text: " ", speed: 80, delayAfter: 2000 },
+            { text: "Dari Anak KS Calon Kepala BPS RI", speed: 80, delayAfter: 500, className: "string"},
+            { text: "M. Hafidz A.R.H", speed: 80, delayAfter: 0, className: "string" }
+        ];
+
+        // --- ENGINE LOGIKA ---
+        const outputDiv = document.getElementById('consoleOutput');
+        const startOverlay = document.getElementById('startOverlay');
+        const startBtn = document.getElementById('startBtn');
+        const terminalWindow = document.getElementById('terminalWindow');
+        const bgMusic = document.getElementById('bgMusic');
+
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        async function jalankanSkenario() {
+            let cursor = document.querySelector('.cursor');
+
+            for (let i = 0; i < skenarioCoding.length; i++) {
+                const item = skenarioCoding[i];
+                
+                const lineDiv = document.createElement('div');
+                lineDiv.classList.add('line');
+                if (item.className) lineDiv.classList.add(item.className);
+                
+                outputDiv.insertBefore(lineDiv, cursor);
+                window.scrollTo(0, document.body.scrollHeight);
+
+                const characters = item.text.split('');
+                for (let char of characters) {
+                    lineDiv.textContent += char;
+                    const variasi = (Math.random() * 0.5) + 0.8; 
+                    await sleep(item.speed * variasi);
+                }
+
+                await sleep(item.delayAfter);
+            }
+        }
+
+        // Logic Tombol Start (PENTING UNTUK MUSIK)
+        startBtn.addEventListener('click', () => {
+            // 1. Putar Musik
+            bgMusic.volume = 0.6; // Volume 60%
+            bgMusic.play().catch(error => {
+                console.log("Gagal autoplay audio:", error);
+            });
+
+            // 2. Transisi Tampilan
+            startOverlay.style.opacity = '0';
+            setTimeout(() => {
+                startOverlay.style.display = 'none';
+                terminalWindow.style.opacity = '1';
+                
+                // 3. Mulai Ketik
+                setTimeout(jalankanSkenario, 1000);
+            }, 500);
+        });
+
+    </script>
+</body>
+</html>
