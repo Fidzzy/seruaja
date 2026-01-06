@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>060106-060126</title>
     <style>
-        /* --- GAYA TAMPILAN (CSS) --- */
         
         * {
             box-sizing: border-box;
@@ -94,7 +93,7 @@
             50% { opacity: 0; }
         }
 
-        /* --- Overlay Tombol Start (BARU) --- */
+        /* --- Overlay Tombol Start --- */
         .start-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -145,8 +144,8 @@
     </div>
 
     <!-- Audio Element -->
-    <!-- PERHATIAN: GANTI src DI BAWAH DENGAN FILE LAGUMU -->
-    <!-- Contoh: <source src="lagu-favorit-dia.mp3" type="audio/mpeg"> -->
+    <!-- GANTI src DI BAWAH DENGAN FILE LAGU -->
+    <!-- Contoh: <source src="lagu.mp3" type="audio/mpeg"> -->
     <audio id="bgMusic" loop>
         <source src="laguakhir.mp3" type="audio/mpeg">
         Browser kamu tidak mendukung audio.
@@ -165,7 +164,7 @@
     </div>
 
     <script>
-        // Skenario Asli Kamu
+        // Skenario
         const skenarioCoding = [
             { text: "Haloooooo......", speed: 70, delayAfter: 2000 },
             { text: "Met Ultah ke-20! Mutiiiiii 🎂", speed: 60, delayAfter: 1500, className: "keyword" },
@@ -212,8 +211,8 @@
             { text: "Tengs juga dh mau ngeladeni ntah apa aj yg kubilang", speed: 60, delayAfter: 1000 },
             { text: "Dah capek kau pasti dengarnya :)", speed: 60, delayAfter: 1000 },
             { text: "Sekali lagi, Happy Birthday yyyyyyyyy! ✨", speed: 50, delayAfter: 1000, className: "keyword" },
-            { text: " ", speed: 80, delayAfter: 2000 },
-            { text: "Dari Anak KS Calon Kepala BPS RI", speed: 80, delayAfter: 500, className: "string"},
+            { text: " ", speed: 80, delayAfter: 1000 },
+            { text: "Dari: Anak KS Calon Kepala BPS RI", speed: 80, delayAfter: 500, className: "string"},
             { text: "M. Hafidz A.R.H", speed: 80, delayAfter: 0, className: "string" }
         ];
 
@@ -250,7 +249,7 @@
             }
         }
 
-        // Logic Tombol Start (PENTING UNTUK MUSIK)
+        // Logic Tombol Start 
         startBtn.addEventListener('click', () => {
             // 1. Putar Musik
             bgMusic.volume = 0.6; // Volume 60%
